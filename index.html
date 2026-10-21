@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Don Braulio · Pizzería</title>
+<meta name="theme-color" content="#3d4a2c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Don Braulio">
+<style>
+  :root{
+    --brick:#b8402a; --brick-d:#8f2f1d; --cream:#fbf3e4; --paper:#fffaf0;
+    --olive:#3d4a2c; --ink:#2a2018; --muted:#7a6a58; --gold:#e8a93a; --line:#eadfc8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:Georgia,'Times New Roman',serif;background:var(--cream);color:var(--ink);line-height:1.45}
+  button{font-family:inherit;cursor:pointer;border:0}
+  .sans{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+
+  header{position:sticky;top:0;z-index:20;background:var(--olive);color:var(--cream);
+    display:flex;align-items:center;justify-content:space-between;padding:12px 20px;box-shadow:0 2px 10px #0003}
+  .logo{font-size:1.4rem;font-weight:bold;letter-spacing:.5px}
+  .logo span{color:var(--gold)}
+  .cart-btn{background:var(--gold);color:var(--ink);padding:9px 16px;border-radius:999px;font-weight:bold;font-size:.95rem}
+  .cart-btn b{background:var(--brick);color:#fff;border-radius:999px;padding:1px 8px;margin-left:6px;font-size:.85rem}
+
+  .hero{background:linear-gradient(135deg,var(--brick),var(--brick-d));color:#fff;text-align:center;padding:56px 20px 64px;position:relative;overflow:hidden}
+  .hero::after{content:"🍕";position:absolute;font-size:12rem;opacity:.08;right:-30px;bottom:-40px;transform:rotate(-15deg)}
+  .hero h1{font-size:clamp(2rem,6vw,3.4rem);margin-bottom:10px}
+  .hero p{max-width:520px;margin:0 auto 22px;opacity:.92;font-size:1.1rem}
+  .hero a{display:inline-block;background:var(--gold);color:var(--ink);padding:13px 28px;border-radius:999px;font-weight:bold;text-decoration:none}
+  .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px;font-size:.9rem}
+  .badges span{background:#ffffff22;padding:6px 12px;border-radius:999px}
+
+  main{max-width:1050px;margin:0 auto;padding:30px 16px 90px}
+  .tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 0 14px;position:sticky;top:58px;background:var(--cream);z-index:10}
+  .tab{background:var(--paper);border:2px solid var(--line);color:var(--ink);padding:8px 18px;border-radius:999px;white-space:nowrap;font-size:.95rem}
+  .tab.on{background:var(--olive);color:var(--cream);border-color:var(--olive)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;margin-top:10px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 3px 10px #5a3a1a14}
+  .pic{height:130px;display:grid;place-items:center;font-size:4.2rem}
+  .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .body h3{font-size:1.15rem}
+  .body p{color:var(--muted);font-size:.92rem;flex:1}
+  .tag{font-size:.7rem;background:var(--gold);padding:2px 8px;border-radius:999px;align-self:flex-start;font-family:system-ui,sans-serif;font-weight:bold}
+  .sizes{display:flex;gap:6px}
+  .size{flex:1;padding:7px 4px;border-radius:10px;background:#fff;border:2px solid var(--line);font-size:.8rem;line-height:1.2;font-family:system-ui,sans-serif}
+  .size.on{border-color:var(--brick);background:#fbe6e0;color:var(--brick-d);font-weight:bold}
+  .row{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+  .price{font-size:1.3rem;font-weight:bold;color:var(--brick-d)}
+  .add{background:var(--brick);color:#fff;padding:9px 16px;border-radius:999px;font-weight:bold;font-size:.9rem}
+  .add:active{transform:scale(.95)}
+
+  .panel-bg{position:fixed;inset:0;background:#0007;display:none;z-index:40}
+  .panel-bg.open{display:block}
+  .panel{position:fixed;top:0;right:0;height:100%;width:min(420px,100%);background:var(--paper);z-index:50;transform:translateX(100%);transition:.25s;display:flex;flex-direction:column}
+  .panel.open{transform:none}
+  .ph{padding:16px 18px;background:var(--olive);color:var(--cream);display:flex;justify-content:space-between;align-items:center;font-size:1.2rem}
+  .ph button{background:none;color:inherit;font-size:1.6rem}
+  .items{flex:1;overflow:auto;padding:12px 18px}
+  .empty{text-align:center;color:var(--muted);margin-top:50px}
+  .it{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+  .it .e{font-size:2rem}
+  .it .t{flex:1;font-size:.95rem}
+  .it small{color:var(--muted);display:block;font-family:system-ui,sans-serif}
+  .qty{display:flex;align-items:center;gap:8px;font-family:system-ui,sans-serif}
+  .qty button{width:28px;height:28px;border-radius:50%;background:var(--line);font-size:1rem}
+  .foot{padding:16px 18px;border-top:2px dashed var(--line);display:flex;flex-direction:column;gap:10px}
+  .foot input,.foot select{padding:10px;border:2px solid var(--line);border-radius:10px;font-size:.95rem;font-family:system-ui,sans-serif;width:100%;background:#fff}
+  .tot{display:flex;justify-content:space-between;font-size:1.3rem;font-weight:bold}
+  .send{background:#1f9d55;color:#fff;padding:14px;border-radius:12px;font-size:1.05rem;font-weight:bold}
+  .send:disabled{background:#b9b3a6}
+  footer{background:var(--olive);color:var(--cream);text-align:center;padding:28px 16px;font-size:.9rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Don <span>Braulio</span></div>
+  <button class="cart-btn sans" id="openCart">🛒 Mi pedido <b id="count">0</b></button>
+</header>
+
+<section class="hero">
+  <h1>Pizza hecha como se debe</h1>
+  <p>Masa de fermentación lenta, ingredientes frescos y horno bien caliente. Pide en línea y te la llevamos.</p>
+  <a href="#menu" class="sans">Ver el menú</a>
+  <div class="badges sans"><span>🛵 Envío a domicilio</span><span>⏱️ 30–40 min</span><span>🔥 Horno de piedra</span></div>
+  <p class="sans" style="margin-top:18px;font-size:.9rem"><a href="pollo.html" style="background:none;color:#fff;padding:0;text-decoration:underline;font-weight:normal">¿Antojo de pollo a la brasa? Mira la pollería →</a></p>
+</section>
+
+<main id="menu">
+  <div class="tabs sans" id="tabs"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer class="sans">© Don Braulio · Pizzería · Abierto todos los días de 12:00 a 23:30</footer>
+
+<div class="panel-bg" id="bg"></div>
+<aside class="panel" id="panel">
+  <div class="ph"><span>Tu pedido</span><button id="closeCart" aria-label="Cerrar">×</button></div>
+  <div class="items" id="items"></div>
+  <div class="foot">
+    <input id="name" placeholder="Tu nombre">
+    <select id="mode"><option value="Entrega a domicilio">🛵 Entrega a domicilio</option><option value="Recoger en tienda">🏪 Recoger en tienda</option></select>
+    <input id="addr" placeholder="Dirección de entrega">
+    <div class="tot"><span>Total</span><span id="total">$0</span></div>
+    <button class="send" id="send" disabled>Enviar pedido por WhatsApp</button>
+  </div>
+</aside>
+
+<script>
+/* ====== CONFIGURA AQUÍ ====== */
+const WHATSAPP = "5492615692297";   // tu número con código de país, sin + ni espacios
+const MONEDA = "$";
+
+const SIZES = [
+  {k:"ch", n:"Chica", d:'20 cm', m:0},
+  {k:"me", n:"Mediana", d:'30 cm', m:60},
+  {k:"gr", n:"Grande", d:'38 cm', m:120}
+];
+
+const MENU = [
+  {cat:"Pizzas", id:"p1", name:"Margarita de la Casa", e:"🍕", bg:"#f6d9a8", desc:"Salsa de tomate, mozzarella fresca y albahaca.", price:129, pizza:true, tag:"Clásica"},
+  {cat:"Pizzas", id:"p2", name:"Pepperoni Braulio", e:"🍕", bg:"#f3c4b6", desc:"Doble pepperoni, mozzarella y orégano.", price:149, pizza:true, tag:"Favorita"},
+  {cat:"Pizzas", id:"p3", name:"Hawaiana", e:"🍍", bg:"#f8e3a1", desc:"Jamón, piña caramelizada y queso.", price:145, pizza:true},
+  {cat:"Pizzas", id:"p4", name:"Mexicana", e:"🌶️", bg:"#f1b9a5", desc:"Chorizo, jalapeño, cebolla y frijoles refritos.", price:159, pizza:true, tag:"Picosa"},
+  {cat:"Pizzas", id:"p5", name:"Cuatro Quesos", e:"🧀", bg:"#fbe9b0", desc:"Mozzarella, gorgonzola, parmesano y provolone.", price:165, pizza:true},
+  {cat:"Pizzas", id:"p6", name:"Vegetariana", e:"🥬", bg:"#d5e5b8", desc:"Pimiento, champiñón, aceituna, cebolla y tomate.", price:149, pizza:true},
+  {cat:"Complementos", id:"c1", name:"Pan de ajo", e:"🥖", bg:"#f0dcb8", desc:"Con mantequilla, ajo y perejil. 6 piezas.", price:69},
+  {cat:"Complementos", id:"c2", name:"Alitas BBQ", e:"🍗", bg:"#efc7a0", desc:"10 piezas con aderezo ranch.", price:129},
+  {cat:"Complementos", id:"c3", name:"Ensalada César", e:"🥗", bg:"#d9e8c2", desc:"Lechuga, crutones y parmesano.", price:89},
+  {cat:"Bebidas", id:"b1", name:"Refresco 600 ml", e:"🥤", bg:"#cfe2ef", desc:"Cola, naranja o limón.", price:35},
+  {cat:"Bebidas", id:"b2", name:"Limonada natural", e:"🍋", bg:"#f6efae", desc:"Jarra de 1 litro.", price:59},
+  {cat:"Bebidas", id:"b3", name:"Agua mineral", e:"💧", bg:"#d6ecf3", desc:"600 ml.", price:30},
+  {cat:"Postres", id:"d1", name:"Tiramisú", e:"🍰", bg:"#e9d3bd", desc:"Receta de la casa, porción individual.", price:79},
+  {cat:"Postres", id:"d2", name:"Brownie con helado", e:"🍫", bg:"#d7bba2", desc:"Caliente, con bola de vainilla.", price:85}
+];
+
+/* ====== LÓGICA ====== */
+const $ = s => document.querySelector(s);
+const fmt = n => MONEDA + n.toLocaleString("es-MX");
+const cats = [...new Set(MENU.map(m => m.cat))];
+let cat = cats[0];
+let sel = {};     // tamaño elegido por producto
+let cart = [];
+
+try { cart = JSON.parse(localStorage.getItem("braulio-cart") || "[]"); } catch(e){}
+const save = () => { try { localStorage.setItem("braulio-cart", JSON.stringify(cart)); } catch(e){} };
+
+function renderTabs(){
+  $("#tabs").innerHTML = cats.map(c => `<button class="tab ${c===cat?'on':''}" data-c="${c}">${c}</button>`).join("");
+  $("#tabs").querySelectorAll(".tab").forEach(b => b.onclick = () => { cat = b.dataset.c; renderTabs(); renderGrid(); });
+}
+
+function priceOf(m){ return m.pizza ? m.price + SIZES.find(s => s.k === (sel[m.id] || "me")).m : m.price; }
+
+function renderGrid(){
+  $("#grid").innerHTML = MENU.filter(m => m.cat === cat).map(m => {
+    const cur = sel[m.id] || "me";
+    return `<article class="card">
+      <div class="pic" style="background:${m.bg}">${m.e}</div>
+      <div class="body">
+        ${m.tag ? `<span class="tag">${m.tag}</span>` : ""}
+        <h3>${m.name}</h3><p>${m.desc}</p>
+        ${m.pizza ? `<div class="sizes">${SIZES.map(s => `<button class="size ${s.k===cur?'on':''}" data-id="${m.id}" data-k="${s.k}">${s.n}<br>${s.d}</button>`).join("")}</div>` : ""}
+        <div class="row sans"><span class="price">${fmt(priceOf(m))}</span><button class="add" data-id="${m.id}">Agregar</button></div>
+      </div></article>`;
+  }).join("");
+  document.querySelectorAll(".size").forEach(b => b.onclick = () => { sel[b.dataset.id] = b.dataset.k; renderGrid(); });
+  document.querySelectorAll(".add").forEach(b => b.onclick = () => add(b.dataset.id));
+}
+
+function add(id){
+  const m = MENU.find(x => x.id === id);
+  const size = m.pizza ? SIZES.find(s => s.k === (sel[id] || "me")) : null;
+  const key = id + (size ? "-" + size.k : "");
+  const found = cart.find(c => c.key === key);
+  if (found) found.q++;
+  else cart.push({key, name:m.name, e:m.e, size:size ? size.n : "", price:priceOf(m), q:1});
+  save(); renderCart();
+}
+
+function renderCart(){
+  const n = cart.reduce((a,c) => a + c.q, 0);
+  const total = cart.reduce((a,c) => a + c.q * c.price, 0);
+  $("#count").textContent = n;
+  $("#total").textContent = fmt(total);
+  $("#send").disabled = !n;
+  $("#items").innerHTML = n ? cart.map((c,i) => `<div class="it">
+      <div class="e">${c.e}</div>
+      <div class="t">${c.name}<small>${c.size ? c.size + " · " : ""}${fmt(c.price)}</small></div>
+      <div class="qty"><button data-i="${i}" data-d="-1">−</button><b>${c.q}</b><button data-i="${i}" data-d="1">+</button></div>
+    </div>`).join("") : `<div class="empty">Tu pedido está vacío.<br>¡Agrega una pizza! 🍕</div>`;
+  $("#items").querySelectorAll(".qty button").forEach(b => b.onclick = () => {
+    const c = cart[+b.dataset.i]; c.q += +b.dataset.d;
+    if (c.q <= 0) cart.splice(+b.dataset.i, 1);
+    save(); renderCart();
+  });
+}
+
+const toggle = open => { $("#panel").classList.toggle("open", open); $("#bg").classList.toggle("open", open); };
+$("#openCart").onclick = () => toggle(true);
+$("#closeCart").onclick = $("#bg").onclick = () => toggle(false);
+$("#mode").onchange = () => $("#addr").style.display = $("#mode").value.startsWith("Entrega") ? "" : "none";
+
+$("#send").onclick = () => {
+  const total = cart.reduce((a,c) => a + c.q * c.price, 0);
+  const lines = cart.map(c => `• ${c.q}x ${c.name}${c.size ? " (" + c.size + ")" : ""} — ${fmt(c.q * c.price)}`).join("\n");
+  const msg = `Hola Don Braulio, quiero hacer un pedido:\n\n${lines}\n\nTotal: ${fmt(total)}\n${$("#mode").value}` +
+    (($("#mode").value.startsWith("Entrega") && $("#addr").value) ? `\nDirección: ${$("#addr").value}` : "") +
+    ($("#name").value ? `\nNombre: ${$("#name").value}` : "");
+  window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg), "_blank");
+};
+
+renderTabs(); renderGrid(); renderCart();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+</script>
+</body>
+</html>
