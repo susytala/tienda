@@ -1,0 +1,16 @@
+{
+  "name": "Don Braulio Pizzería",
+  "short_name": "Don Braulio",
+  "description": "Pide pizza de Don Braulio en línea",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fbf3e4",
+  "theme_color": "#3d4a2c",
+  "lang": "es",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
